@@ -1,0 +1,14 @@
+{
+    "name": "pix/mazovia-converter",
+    "description": "Decodes mazovia encoded strings or files, and rencodes them in UTF-8.",
+    "type": "library",
+    "license": "GNU GPLv3",
+    "authors": [
+        {
+            "name": "Bosnjak Daniel",
+            "email": "daniel@pikselownia.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
