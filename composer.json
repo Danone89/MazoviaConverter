@@ -2,7 +2,7 @@
     "name": "pix/mazovia-converter",
     "description": "Decodes mazovia encoded strings or files, and rencodes them in UTF-8.",
     "type": "library",
-    "license": "GNU GPLv3",
+    "license": "GPL-3.0-only",
     "authors": [
         {
             "name": "Bosnjak Daniel",
