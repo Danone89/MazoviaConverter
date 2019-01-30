@@ -9,8 +9,8 @@ namespace Pix\EncodingDecoders;
 
 
 /**
- source https://en.wikipedia.org/wiki/Mazovia_encoding 
-**/
+ *@source https://en.wikipedia.org/wiki/Mazovia_encoding 
+ **/
 class MazoviaConverter
 {
 
@@ -32,7 +32,12 @@ class MazoviaConverter
             0xc8 => 0x2d,
             0xd9 => 0x2d,
             0xda => 0x2d,
-			/**                  **/
+            /** znaki blokowe =>  | 0x7c */
+            0xba => 0x7C,
+            0xb3 => 0x7C,
+
+            /**                  **/
+            0x92 => 0xb3,
             0x8F => 0xA1,
             0x95 => 0xc6,
             0x90 => 0xca,
@@ -46,14 +51,11 @@ class MazoviaConverter
             0x86 => 0xb1,
             0x8d => 0xe6,
             0x91 => 0xea,
-			0xb3 => 0x7C,
-            0x92 => 0xb3,
             0xa4 => 0xf1,
             0xa2 => 0xf3,
             0x9e => 0xb6,
             0xa7 => 0xbf,
-            /** znaki blokowe =>  | 0x7c */
-            0xba => 0x7C,
+
 	];
 	
     public static function decode_file($filename,$destination_encoding= 'UTF-8')
@@ -69,7 +71,7 @@ class MazoviaConverter
             fgets($handle);
             while (!feof($handle)) {
                 $data = fgets($handle);
-                $output .= self::convert($data,$destination_encoding);
+                $output .= self::convert($data,$destination_encoding)."\r\n";
             }
             fclose($handle);
             if ($raw) {
@@ -89,17 +91,22 @@ class MazoviaConverter
     }
 	
 	
-	
-    protected static function convert($string,$destination_encoding )
-    {
-        static $find,$replace;
+	   /**
+     * Przeprowadza konwersję kodowania znaków z Mazovia CP432 na UTF-8. Odczyt pliku znak po znaku. 
+     * @param array $args definuj parametry wejściowe
+     * @return string plik wyjściowy
+     */
+    protected static function convert($string,$destination_encoding) {
+        
+        static $find, $replace;
 		
-		if(empty($find) or empty($replace)){
-			$find = array_map('chr',array_keys(self::LETTER_MAP));
-			$replace = array_map('chr',self::LETTER_MAP);
-		}
-        $string = str_replace($find, $replace,$string);
-        return iconv('ISO-8859-2', $destination_encoding,$string);
+		if(empty($find)){
+            $find = array_map('chr',array_keys(self::LETTER_MAP));
+            $replace = array_map('chr',self::LETTER_MAP);
+        }
+        $string = str_replace($find,$replace,$string);
+        return preg_replace('/[\x00-\x09\x7F\x0B\0x0E\0x0F\0x10\0x16]/u', '', iconv('ISO-8859-2', $destination_encoding,$string));
     }
+
 
 }
